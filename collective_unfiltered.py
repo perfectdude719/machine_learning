@@ -108,7 +108,7 @@ ridge_model = Ridge(alpha=0.1)
 regression_metrics = {}
 
 # Step 5: Train and validate each model
-
+#
 ## Linear Regression
 linear_model.fit(X_train, y_train)
 y_val_pred = linear_model.predict(X_val)
