@@ -7,14 +7,13 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression, Lasso, Ridge #batch
 from sklearn.metrics import mean_squared_error, mean_absolute_error, make_scorer, r2_score
 import matplotlib.pyplot as plt
-
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 # Path to a file in Google Drive
 data = pd.read_csv('https://drive.google.com/uc?id=1nqSQ-M_Ff2TDD2U0syAbFBvJZuXJLWNc')
 #data=pd.read_csv('California_Houses.csv')
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+
+
 
 # Define feature columns
 X_features = [
