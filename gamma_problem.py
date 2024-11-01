@@ -69,12 +69,14 @@ f1=[]
 for k in range(1,101):
     knn = KNeighborsClassifier(n_neighbors=k)  # You can adjust the number of neighbors
     knn.fit(X_train, y_train)  # Train the model
-    y_pred = knn.predict(X_test)
-    # Calculate additional metrics
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-    f1.append(f1_score(y_test, y_pred))
+    y_pred_val = knn.predict(X_validation)
+    
+    # Calculate additional metrics for the validation set
+    accuracy = accuracy_score(y_validation, y_pred_val)
+    precision = precision_score(y_validation, y_pred_val)
+    recall = recall_score(y_validation, y_pred_val)
+    cm=confusion_matrix(y_validation,y_pred_val)
+    f1.append(f1_score(y_validation, y_pred_val))
 
 best_k_value=f1.index(max(f1))+1
 print(f"the best k index is {best_k_value}")
