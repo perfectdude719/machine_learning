@@ -63,123 +63,6 @@ print(f"Validation set size: {len(val_data)}")
 print(f"Test set size: {len(test_data)}")
 print("Data preparation complete!")
 
-# 2 create neural network structure
-class Neural_Network_1_hidden_layer(nn.Module):
-        def __init__(self, input_size=28*28, hidden_size=10, num_classes=10):
-            super(Neural_Network_1_hidden_layer, self).__init__()
-            self.fc1 = nn.Linear(input_size, hidden_size) 
-            self.fc2 = nn.Linear(hidden_size, num_classes)
-
-        def forward(self, x):
-            x = x.view(-1, 28*28)  # Flatten the input
-            x = torch.relu(self.fc1(x))  # Apply ReLU activation after first hidden layer
-            x = self.fc2(x)  # Output layer
-            return x
-        
-        
-
-# 3. Set device to GPU if available, else fallback to CPU
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# Instantiate the model and move it to the selected device
-model = Neural_Network_1_hidden_layer().to(device)
-
-# Loss function and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01)
-
-
-
-
-# 4. Training Process
-def train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs=10):
-    train_losses, val_losses = [], []
-    train_accuracies, val_accuracies = [], []
-
-    for epoch in range(num_epochs):
-        model.train()
-        running_loss = 0.0 # this is the cumulative loss during epoch
-        correct_train = 0  
-        total_train = 0
-        
-        # Train the model on the training set
-        for images, labels in train_loader:
-            images, labels = images.to(device), labels.to(device)  # Move to GPU
-            
-            optimizer.zero_grad()
-            outputs = model(images)  # Forward pass
-            loss = criterion(outputs, labels)  # Compute loss
-            loss.backward()  # Backward pass (compute gradients)
-            optimizer.step()  # Update weights
-
-            running_loss += loss.item()
-            _, predicted = torch.max(outputs, 1)  # Get the predicted class
-            correct_train += (predicted == labels).sum().item()
-            total_train += labels.size(0)
-
-        avg_train_loss = running_loss / len(train_loader)
-        train_accuracy = correct_train / total_train * 100
-        train_losses.append(avg_train_loss)
-        train_accuracies.append(train_accuracy)
-
-        # Validation phase
-        model.eval()
-        running_loss = 0.0
-        correct_val = 0
-        total_val = 0
-
-        with torch.no_grad():
-            for images, labels in val_loader:
-                images, labels = images.to(device), labels.to(device)  # Move to GPU
-                outputs = model(images)  # Forward pass
-                loss = criterion(outputs, labels)
-
-                running_loss += loss.item()
-                _, predicted = torch.max(outputs, 1)
-                correct_val += (predicted == labels).sum().item()
-                total_val += labels.size(0)
-
-        avg_val_loss = running_loss / len(val_loader)
-        val_accuracy = correct_val / total_val * 100
-        val_losses.append(avg_val_loss)
-        val_accuracies.append(val_accuracy)
-
-        print(f"Epoch [{epoch+1}/{num_epochs}], "
-              f"Train Loss: {avg_train_loss:.4f}, Train Accuracy: {train_accuracy:.2f}%, "
-              f"Validation Loss: {avg_val_loss:.4f}, Validation Accuracy: {val_accuracy:.2f}%")
-    
-    return train_losses, val_losses, train_accuracies, val_accuracies
-
-
-
-# Train the model
-train_losses, val_losses, train_accuracies, val_accuracies = train_model(
-    model, train_loader, val_loader, criterion, optimizer, num_epochs=10
-)
-
-
-
-# 5. Plot Training and Validation Loss
-plt.figure(figsize=(12, 6))
-plt.subplot(1, 2, 1)
-plt.plot(train_losses, label='Training Loss')
-plt.plot(val_losses, label='Validation Loss')
-plt.title('Training and Validation Loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-
-# 6. Plot Training and Validation Accuracy
-plt.subplot(1, 2, 2)
-plt.plot(train_accuracies, label='Training Accuracy')
-plt.plot(val_accuracies, label='Validation Accuracy')
-plt.title('Training and Validation Accuracy')
-plt.xlabel('Epochs')
-plt.ylabel('Accuracy (%)')
-plt.legend()
-
-plt.tight_layout()
-plt.show()
 
 
 # Hyperparameters for tuning
@@ -329,6 +212,7 @@ def tune_hyperparameters(default_params, param_ranges, num_epochs=10):
 
 import pandas as pd
 
+results=(tune_hyperparameters(default_params=default_params,param_ranges=param_ranges,num_epochs=10))
 # Convert the results list to a DataFrame
 df = pd.DataFrame(results)
 
